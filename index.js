@@ -102,7 +102,9 @@ function addDept() {
     }
   ).then(
     function(answer) {
-      var query = "INSERT INTO departments VALUES ('" + answer.deptName + "')"
+      console.log(answer)
+      var query = "INSERT INTO departments (name) VALUES ('" + answer.deptName + "')"
+      console.log(query)
       connection.query(query, function(err, res){
         console.log("Department added!")
         runApp();
@@ -130,7 +132,7 @@ function addRole() {
     }
   ]).then(
     function(answer) {
-      var query = "INSERT INTO roles VALUES ('" + answer.roleTitle + "', '" + answer.roleSalary + "', '" + answer.roleDept + "')"
+      var query = "INSERT INTO roles (title, salary, department_id) VALUES ('" + answer.roleTitle + "', '" + answer.roleSalary + "', '" + answer.roleDept + "')"
       connection.query(query, function(err, res){
         console.log("Role added!");
         runApp();
@@ -153,11 +155,8 @@ function updateEmployeeRole() {
     }
   ]).then(
     function(answer) {
-      var queryString = "UPDATE employees SET role_id  = " 
-      queryString += answer.newRole
-      queryString += " WHERE employee_id = "
-      queryString += answer.employeeID
-      var query = queryString
+      var query = "UPDATE employees SET role_id  = " + answer.newRole + " WHERE employee_id = " + answer.employeeId
+      console.log(query)
       connection.query(query, function(err, res){
         console.log("Employee role updated!")
         runApp();
@@ -190,7 +189,7 @@ function addEmployee() {
     }
   ]).then(
     function(answer) {
-      var query = "INSERT INTO employees VALUES ('" + answer.employeeFirst + "', '" + answer.employeeLast + "', '" + answer.employeeRole + "', '" + answer.managerID + "')"
+      var query = "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ('" + answer.employeeFirst + "', '" + answer.employeeLast + "', '" + answer.employeeRole + "', '" + answer.managerID + "')"
       connection.query(query, function(err, res){
         console.log("Employee added!")
         runApp();
