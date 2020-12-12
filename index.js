@@ -4,24 +4,22 @@ var cTable = require("console.table")
 
 var connection = mysql.createConnection({
   host: "localhost",
-  port: 3040,
+  port: 3306,
   user: "root",
-  password: "",
-  database: "employees_db"
+  password: "3ttaJam35?!",
+  database: "employeesdb"
 });
 
 connection.connect(function (err) {
   if (err) throw err;
-  runProgram();
+  runApp();
 });
-
-runApp()
 
 function runApp() {
   inquirer
     .prompt({
       name: "action",
-      type: "rawlist",
+      type: "list",
       message: "What would you like to do?",
       choices: [
         "View all employees",
@@ -31,6 +29,7 @@ function runApp() {
         "Add role",
         "View all departments",
         "Add department",
+        "Exit"
       ]
     })
     .then(function (answer) {
@@ -58,6 +57,9 @@ function runApp() {
         case "Add department":
           addDept();
           break;
+        case "Exit":
+          connection.end();
+          break;  
       }
     });
 }
@@ -101,7 +103,7 @@ function addDept() {
 }
 
 function addRole() {
-  inquirer.prompt(
+  inquirer.prompt([
     {
       name: "roleTitle",
       type: "input",
@@ -117,18 +119,19 @@ function addRole() {
       type: "input",
       message: "What is the role's dept?"
     }
-  ).then(
+  ]).then(
     function(answer) {
       var query = "INSERT INTO roles VALUES ('" + answer.roleTitle + "', '" + answer.roleSalary + "', '" + answer.roleDept + "')"
       connection.query(query, function(err, res){
-        console.log("Role added!")
+        console.log("Role added!");
+        runApp();
       })
     }
   )
 }
 
 function addEmployee() {
-  inquirer.prompt(
+  inquirer.prompt([
     {
       name: "employeeFirst",
       type: "input",
@@ -149,7 +152,7 @@ function addEmployee() {
       type: "input",
       message: "What is the ID of the employee's manager?"
     }
-  ).then(
+  ]).then(
     function(answer) {
       var query = "INSERT INTO employees VALUES ('" + answer.employeeFirst + "', '" + answer.employeeLast + "', '" + answer.employeeRole + "', '" + answer.managerID + "')"
       connection.query(query, function(err, res){
