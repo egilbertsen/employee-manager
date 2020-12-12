@@ -35,11 +35,15 @@ function runApp() {
     .then(function (answer) {
       switch (answer.action) {
         case "View all employees":
-          viewEmployeesById();
+          viewEmployees();
           break;
 
         case "Add employee":
           addEmployee();
+          break;
+        
+        case "Update employee role":
+          updateEmployeeRole();  
           break;
 
         case "View all roles":
@@ -57,6 +61,7 @@ function runApp() {
         case "Add department":
           addDept();
           break;
+
         case "Exit":
           connection.end();
           break;  
@@ -64,24 +69,27 @@ function runApp() {
     });
 }
 
-function viewEmployeesById() {
-  var query = "SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, employees.manager FROM employees INNER JOIN roles ON employees.role_id=roles.title"
+function viewEmployees() {
+  var query = "SELECT * FROM employees"
   connection.query(query, function(err, res){
-    console.table(res)
+    console.table(res);
+    runApp();
   })
 }
 
 function viewDepts() {
-  var query = "SELECT departments.id, departments.name FROM departments"
+  var query = "SELECT * FROM departments"
   connection.query(query, function(err, res){
-    console.table(res)
+    console.table(res);
+    runApp();
   })
 }
 
 function viewRoles() {
-  var query = "SELECT roles.id, roles.title, roles.salary, roles.department_id FROM roles"
+  var query = "SELECT * FROM roles"
   connection.query(query, function(err, res){
-    console.table(res)
+    console.table(res);
+    runApp();
   })
 }
 
@@ -97,6 +105,7 @@ function addDept() {
       var query = "INSERT INTO departments VALUES ('" + answer.deptName + "')"
       connection.query(query, function(err, res){
         console.log("Department added!")
+        runApp();
       })
     }
   )
@@ -130,6 +139,33 @@ function addRole() {
   )
 }
 
+function updateEmployeeRole() {
+  inquirer.prompt([
+    {
+      name: "employeeId",
+      type: "input",
+      message: "What is the employee's ID number?"
+    },
+    {
+      name: "newRole",
+      type: "input",
+      message: "What is the employee's new role ID?"
+    }
+  ]).then(
+    function(answer) {
+      var queryString = "UPDATE employees SET role_id  = " 
+      queryString += answer.newRole
+      queryString += " WHERE employee_id = "
+      queryString += answer.employeeID
+      var query = queryString
+      connection.query(query, function(err, res){
+        console.log("Employee role updated!")
+        runApp();
+      })
+    }
+  )
+}
+
 function addEmployee() {
   inquirer.prompt([
     {
@@ -157,6 +193,7 @@ function addEmployee() {
       var query = "INSERT INTO employees VALUES ('" + answer.employeeFirst + "', '" + answer.employeeLast + "', '" + answer.employeeRole + "', '" + answer.managerID + "')"
       connection.query(query, function(err, res){
         console.log("Employee added!")
+        runApp();
       })
     }
   )
